@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans bg-beige text-textGray;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gold hover:bg-gold-dark text-white font-medium py-2 px-6 rounded-lg transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-slate hover:bg-slate-dark text-white font-medium py-2 px-6 rounded-lg transition-colors duration-200;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-md p-6;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent;
+  }
+
+  .nav-link {
+    @apply text-textGray hover:text-gold transition-colors duration-200 font-medium;
+  }
+
+  .nav-link-active {
+    @apply text-gold font-semibold;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold text-slate mb-4;
+  }
+
+  .badge-green {
+    @apply bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  .badge-red {
+    @apply bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  .badge-blue {
+    @apply bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #EDE7D9; /* beige-dark */
+  border-radius: 6px;
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #D4BA7F 0%, #C9A961 100%);
+  border-radius: 6px;
+  border: 3px solid #EDE7D9;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #C9A961 0%, #B89950 100%);
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Chart container */
+.recharts-wrapper {
+  margin: 0 auto;
+}
