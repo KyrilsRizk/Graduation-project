@@ -2,46 +2,57 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import { z } from 'zod';
 import { Eye, EyeOff } from 'lucide-react';
 import Loader from '../components/common/loader';
 
-const loginSchema = z.object({
-  email: z.string().email("Email is not valid"),
-  password: z.string().regex(/^(?=.*[A-Z])(?=.*\d)(?=.*_)/, {
-    message: "Password must contain an uppercase letter, a number, and an underscore",
-  }),
+const registerSchema = z.object({
+  fullName: z
+    .string()
+    .nonempty({ message: 'Full name is required' })
+    .min(3, { message: 'Full name must be at least 3 characters' })
+    .regex(/^[A-Za-z]+([ '-][A-Za-z]+)*$/, {
+      message: "Full name can only contain letters, spaces, hyphens, and apostrophes",
+    }),
+  email: z
+    .string()
+    .email({ message: 'Invalid email address' })
+    .min(1, { message: 'Email is required' }),
+  password: z
+    .string()
+    .nonempty({ message: 'Password is required' })
+    .min(6, { message: 'Password must be at least 6 characters' })
+    .regex(/^(?=.*[A-Z])(?=.*\d)(?=.*_)/, {
+      message: 'Password must contain an uppercase letter, a number, and an underscore',
+    }),
 });
 
-export default function Login() {
+export default function Register() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const { handleSubmit, register, formState: { errors, isSubmitting, isValid } } = useForm({
+  const { handleSubmit, register, formState: { errors }, reset } = useForm({
     defaultValues: {
+      fullName: '',
       email: '',
       password: '',
     },
     mode: 'all',
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(registerSchema),
   });
 
   const onSubmit = async (data) => {
+    setLoading(true);
+    // replace this with your register logic
     await new Promise((res) => setTimeout(res, 1500));
-
-    if (data.email === 'admin@sovereign.ai' && data.password === 'Admin1_') {
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('userRole', 'admin');
-      navigate('/admin');
-    } else {
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('userRole', 'user');
-      navigate('/');
-    }
+    setLoading(false);
+    reset();
+    navigate('/login');
   };
 
   return (
-    <div className="bg-[#F2ECE2] pt-20 flex flex-col items-center text-center pb-10">
+    <div className="bg-[#F2ECE2] pt-20 pb-10 flex flex-col items-center text-center">
 
       {/* Logo */}
       <div className="image mb-6">
@@ -50,29 +61,37 @@ export default function Login() {
 
       {/* Heading */}
       <div className="text">
-        <h1 className="font-display text-5xl text-[#425B6F] mb-4">
-          Welcome Back
-        </h1>
+        <h1 className="font-display text-5xl text-[#425B6F] mb-4">Welcome</h1>
         <p className="font-sans text-2xl text-[#425B6F]">
-          sign in to access exclusive AI predictions and portfolio tracking
+          create account to access exclusive AI predictions and portfolio tracking
         </p>
       </div>
 
       {/* Card */}
       <div className="w-full max-w-md bg-[#F6F4EE] rounded-3xl shadow p-8 mt-5 mb-5">
         <h1 className="text-2xl font-display text-[#425B6F] text-center mb-8">
-          Sign in
+          create account
         </h1>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-3 space-x-2 text-left"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 text-left">
+
+          {/* Full Name */}
+          <div>
+            <label className="block text-sm text-[#425B6F] mb-1 font-sans">Full name</label>
+            <input
+              type="text"
+              {...register('fullName')}
+              placeholder="Enter your name"
+              className="w-full rounded-2xl border border-gray-300 px-4 py-2 outline-none focus:border-yellow-400"
+            />
+            {errors.fullName && (
+              <p className="text-red-500 text-xs mt-1">{errors.fullName.message}</p>
+            )}
+          </div>
+
           {/* Email */}
           <div>
-            <label className="block text-sm text-[#425B6F] mb-1 font-sans">
-              email address
-            </label>
+            <label className="block text-sm text-[#425B6F] mb-1 font-sans">email address</label>
             <input
               type="email"
               {...register('email')}
@@ -86,9 +105,7 @@ export default function Login() {
 
           {/* Password */}
           <div>
-            <label className="block text-sm text-[#425B6F] mb-1 font-sans">
-              password
-            </label>
+            <label className="block text-sm text-[#425B6F] mb-1 font-sans">password</label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -109,28 +126,16 @@ export default function Login() {
             )}
           </div>
 
-          {/* Remember me + Forgot password */}
-          <div className="flex items-center justify-between text-sm pb-4">
-            <label className="flex items-center gap-2 text-gray-600 font-sans">
-              <input type="checkbox" className="accent-yellow-400" />
-              remember me?
-            </label>
-            <Link to="/forgetpassword" className="text-[#D4AF37] hover:underline font-sans">
-              forgot password?
-            </Link>
-          </div>
-
           {/* Submit */}
           <button
             type="submit"
-            disabled={isSubmitting || !isValid}
-            className="w-full flex items-center border-yellow-200 justify-center px-3 gap-3 rounded-xl border-2 py-2 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-between px-3 gap-3 rounded-xl border-2 border-yellow-200 py-2"
           >
-            {isSubmitting ? (
+            {loading ? (
               <Loader />
             ) : (
               <>
-                <span className="font-sans text-[#425B6F]">Sign in</span>
+                <span className="font-sans text-[#425B6F]">create account</span>
                 <img src="/Logobtn.png" alt="icon" width={24} height={24} />
               </>
             )}
@@ -138,10 +143,8 @@ export default function Login() {
         </form>
 
         <p className="mt-6 text-center text-sm text-yellow-500">
-          don't have an account?{' '}
-          <Link to="/register" className="font-semibold underline">
-            create now
-          </Link>
+          Already have an account?{' '}
+          <Link to="/login" className="font-semibold underline">Sign in</Link>
         </p>
       </div>
     </div>

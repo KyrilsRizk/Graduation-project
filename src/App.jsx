@@ -11,6 +11,7 @@ import AboutUs from './pages/AboutUs';
 import Settings from './pages/Settings';
 import AdminDashboard from './pages/AdminDashboard';
 import Login from './pages/Login';
+import Register from './pages/Register';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="*" element={
           <Layout>
             <Routes>
